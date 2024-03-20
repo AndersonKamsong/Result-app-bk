@@ -1,20 +1,24 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, jsonify
 from subject_model import Subject
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    subjects = Subject.read()
-    return render_template("index.html", subjects=subjects)
+    subjects = Subject.read() 
+    # Convert subject data to a JSON format 
+    subjects_data = [{"id": subject.id, "name": subject.name, "duration": subject.duration} for subject in subjects]
+    return jsonify(subjects_data)
 
 @app.route("/subject/<int:subject_id>")
 def get_subject(subject_id):
     subject = Subject.read(subject_id)
     if subject:
-        return render_template("subject.html", subject=subject)
+        # Convert subject data to a JSON format
+        subject_data = {"id": subject.id, "name": subject.name, "duration": subject.duration}
+        return jsonify(subject_data)
     else:
-        return "Subject not found", 404
+        return jsonify({"error": "Subject not found"}), 404
 
 @app.route("/subject", methods=["POST"])
 def create_subject():
