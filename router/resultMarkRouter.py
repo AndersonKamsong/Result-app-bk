@@ -11,7 +11,8 @@ result = Blueprint('result', __name__)
 def hello_world():
     return "Hello, World Welcome to the result app! ResultApp"
 
-@result.route("/getAllResult", methods=['GET'])
+@result.route("/getAllStudent", methods=['GET'])
 def resultMark():
     return get_all_result()
+    
 

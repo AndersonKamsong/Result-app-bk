@@ -31,8 +31,7 @@ def uploadedFile():
 
 def get_all_result():
     try:
-        return jsonify({'message': 'Data uploaded and stored successfully!',
-                        "result": ResultMark().read()}), 201
+        return jsonify({"result": ResultMark().read()}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
