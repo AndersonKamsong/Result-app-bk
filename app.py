@@ -1,20 +1,16 @@
 
-from config.DataSource import DataSource
-from models.resultMark import ResultMark
-from models.student import Student
+from flask import Flask
+from router.resultMarkRouter import result
+app = Flask(__name__)
 
-ds = DataSource()
-# cursor = ds.create_cursor()
-name = "Anderson2"
-email = "kamsonganderson3@gmail.com"
-dob = "2024-05-11"
-password = "Anderson"
 
-# ds.execute("INSERT INTO student (name,email,dob,password) VALUES (%s,%s,%s,%s)",
-#             (name,email,dob,password))
-# results = ds.execute("SELECT * FROM student")
-# for row in results:
-#     print(row)
-student = Student(id=7,name = "good12",email = "kamsonganderson3@gmail.com",dob = "2024-05-11",password = "Anderson")
-student.delete()
-print(ResultMark().read())
+@app.route("/")
+def hello_world():
+    return "Hello, World Welcome to the result app!"
+
+# Optional URL prefix
+app.register_blueprint(result, url_prefix='/api/result')
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
