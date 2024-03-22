@@ -1,18 +1,19 @@
 from flask import Flask, request, jsonify
-from subject_model import Subject
+from models import subjects
+
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    subjects = Subject.read() 
+    subjects = subjects.read() 
     # Convert subject data to a JSON format 
     subjects_data = [{"id": subject.id, "name": subject.name, "duration": subject.duration} for subject in subjects]
     return jsonify(subjects_data)
 
 @app.route("/subject/<int:subject_id>")
 def get_subject(subject_id):
-    subject = Subject.read(subject_id)
+    subject = subjects.read(subject_id)
     if subject:
         # Convert subject data to a JSON format
         subject_data = {"id": subject.id, "name": subject.name, "duration": subject.duration}
@@ -24,7 +25,7 @@ def get_subject(subject_id):
 def create_subject():
     name = request.form["name"]
     duration = int(request.form["duration"])  # Assuming duration is provided as an integer
-    subject = Subject(name=name, duration=duration)
+    subject = subjects(name=name, duration=duration)
     subject.create()
     return "Subject created successfully", 201
 
@@ -32,7 +33,7 @@ def create_subject():
 def update_subject(subject_id):
     name = request.form["name"]
     duration = int(request.form["duration"])  # Assuming duration is provided as an integer
-    subject = Subject.read(subject_id)
+    subject = subjects.read(subject_id)
     if subject:
         subject.name = name
         subject.duration = duration
@@ -43,7 +44,7 @@ def update_subject(subject_id):
 
 @app.route("/subject/<int:subject_id>", methods=["DELETE"])
 def delete_subject(subject_id):
-    subject = Subject.read(subject_id)
+    subject = subjects.read(subject_id)
     if subject:
         subject.delete()
         return "Subject deleted successfully", 200
