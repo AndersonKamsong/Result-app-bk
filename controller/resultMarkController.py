@@ -21,17 +21,24 @@ def uploadedFile():
         # Convert DataFrame to a list of dictionaries (JSON format)
         data = df.to_dict(orient='records')
         print(data)
-        # Call function to store data in MySQL
+        resultData = [(row['marticule'], row['sub_code'], row['CAmarks'],
+                           row['Examsmarks'], row['Resistmarks']) for row in data]
 
+        print(resultData)
+        # Call function to store data in MySQL
+        ResultMark().saveUploadData(data=resultData)
         return jsonify({'message': 'Data uploaded and stored successfully!'}), 201
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
-def get_all_result():
+def get_all_result(id=None):
     try:
-        return jsonify({"result": ResultMark().read()}), 201
+        if id:
+            return jsonify({"result": ResultMark().read(id=id)}), 201
+        else:
+            return jsonify({"result": ResultMark().read()}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
