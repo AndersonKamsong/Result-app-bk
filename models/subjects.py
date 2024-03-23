@@ -1,64 +1,50 @@
-import sqlite3
-from base_model import AbstractBaseModel
+from config.DataSource import DataSource
 
-class Subjects(AbstractBaseModel):
-    TABLE_NAME = "Subjects"
 
-    def __init__(self,id=None,name=None):
+class Subject():
+    TABLE_NAME = "subjects"
+
+    def __init__(self, id=None, title=None, teacher_id=None):
         self.id = id
-        self.name = name
-    
+        self.title = title
+        self.teacher_id = teacher_id
+        self.ds = DataSource()
+
     def save(self):
         # update subject if it exists
         if self.id:
-            query = f"UPDATE {self.__class__.TABLE_NAME} SET name=? WHERE id=?"
-            with sqlite3.connect("db.sqlite") as connection:
-                cursor = connection.cursor()
-                cursor.execute(query,(self.name,self.id))
+            query = f"UPDATE {self.__class__.TABLE_NAME} SET title=?, teacher_id = ?  WHERE sub_code=?"
+            self.ds.execute(query, (self.title, self.teacher_id, self.id))
         else:
-            #save into database
-            query = f"INSERT INTO {self.__class__.TABLE_NAME} (name) VALUES(?)"
-            with sqlite3.connect("db.sqlite") as connection:
-                cursor = connection.cursor()
-                cursor.execute(query,(self.name))
-
-                new_instance_id = cursor.execute(f"SELECT * MAX(id) FROM {self.__class__.TABLE_NAME}").fetchone()[0]
-
-                self.id = new_instance_id
-    
-    def read(self,id=None):
-        with sqlite3.connect("db.sqlite") as connection:
-                cursor = connection.cursor() 
-        if id:
-            query = f"SELECT (name) FROM {self.__class__.TABLE_NAME} WHERE id=?"
-            result = cursor.execute(query,id).fetchone()
-            subject = Subjects(name=result[1])
-            subject.id = result[0]
-
-            return subject
-        else:
-            query = f"SELECT (name) FROM {self.__class__.TABLE_NAME}"
-            results = cursor.execute(query).fetchall()
-
-            subjects = []
-
+            # save into database
+            query = f"INSERT INTO {self.__class__.TABLE_NAME} (title,teacher_id) VALUES(?,?)"
+            self.ds.execute(query, (self.title, self.teacher_id))
+            results = self.ds.execute(
+                f"SELECT MAX(sub_code) FROM {self.__class__.TABLE_NAME}")
             for result in results:
-                subject = Subjects(name=result[1])
-                subject.id = result[0]
+                new_instance_id = result[0]
+            self.id = new_instance_id
 
+    def read(self, id=None):
+        if id:
+            query = f"SELECT (title) FROM {self.__class__.TABLE_NAME} WHERE sub_code=?"
+            result = self.ds.execute(query, (id,))
+            return result
+        else:
+            query = f"SELECT (title) FROM {self.__class__.TABLE_NAME}"
+            results = self.ds.execute(query)
+            students = []
+            i = 0
+            for result in results:
+                students.append(result)
+            return students
 
-                subjects.append[subject]
-
-                return subjects
-    
-    def delete(self):
-        with sqlite3.connect("db.sqlite") as connection:
-                cursor = connection.cursor()
-        #delete by id
-        if self.id:
-            cursor.execute(f"DELETE FROM {self.__class__.TABLE_NAME} WHERE id=?",(self.id))
+    def delete(self, id=None):
+        if id:
+            query = f"DELETE FROM {self.__class__.TABLE_NAME} WHERE sub_code=?"
+            self.ds.execute(query, (id,))
+            # print(query)
+            print("student delete successfully")
 
         else:
-             cursor.execute(f"DELETE FROM {self.__class__.TABLE_NAME}")
-
-                
+            cursor.execute(f"DELETE FROM {self.__class__.TABLE_NAME}")

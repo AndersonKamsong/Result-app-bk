@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request
-from models.resultMark import ResultMark
 from models.student import Student
 
 def get_all_student():

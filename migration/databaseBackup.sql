@@ -89,7 +89,7 @@ DROP TABLE IF EXISTS `subjects`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `subjects` (
   `sub_code` int(11) NOT NULL AUTO_INCREMENT,
-  `tittle` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
   `teacher_id` int(11) NOT NULL,
   PRIMARY KEY (`sub_code`),
   KEY `teacher_id` (`teacher_id`),
